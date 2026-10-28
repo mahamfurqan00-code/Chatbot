@@ -97,12 +97,40 @@ FALLBACK = (
     "Sorry, I couldn't find a reliable answer to that question. Please contact the "
     "hospital reception for accurate information."
 )
+EMERGENCY_RESPONSE = (
+    "This may be an emergency. Call your local emergency services now or go to the "
+    "nearest emergency department. Do not wait for a chatbot reply. I cannot assess "
+    "symptoms or provide medical advice."
+)
+EMERGENCY_PATTERNS = (
+    r"\bchest pains?\b",
+    r"\bchest tightness\b",
+    r"\b(?:cannot|cant|can not) breathe\b",
+    r"\bdifficulty breathing\b",
+    r"\bshortness of breath\b",
+    r"\bnot breathing\b",
+    r"\b(?:unconscious|passed out|fainted)\b",
+    r"\bsevere bleeding\b",
+    r"\bbleeding heavily\b",
+    r"\bstroke\b",
+    r"\boverdose\b",
+    r"\bpoisoning\b",
+    r"\bseizure\b",
+    r"\bsuicid(?:al|e)\b",
+    r"\bkill myself\b",
+    r"\bsevere pain\b",
+)
 
 def normalize_text(text):
     """Lowercase text, remove punctuation, and collapse repeated whitespace."""
     text = text.lower().strip()
     text = re.sub(r"[^\w\s]", "", text)
     return re.sub(r"\s+", " ", text)
+
+def is_emergency_message(text):
+    """Identify urgent warning phrases before fuzzy FAQ matching."""
+    normalized_text = normalize_text(text)
+    return any(re.search(pattern, normalized_text) for pattern in EMERGENCY_PATTERNS)
 
 def find_best_match(user_question, faq=FAQ):
     normalized_input = normalize_text(user_question)
@@ -124,6 +152,9 @@ def find_best_match(user_question, faq=FAQ):
     return best_key, best_score
 
 def get_answer(user_input, faq=FAQ):
+    if is_emergency_message(user_input):
+        return EMERGENCY_RESPONSE, "emergency guidance", 1.0
+
     key, score = find_best_match(user_input, faq)
     if key is not None and score >= THRESHOLD:
         return faq[key], key, score

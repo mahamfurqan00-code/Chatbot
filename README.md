@@ -16,6 +16,8 @@ This project helped me practice Python programming, web development, API integra
 - Fuzzy text matching to handle slightly different question wording.
 - Flask backend with a chat API.
 - Suggested questions to help users get started.
+- Urgent symptom detection that prioritizes emergency-service guidance over FAQ matching.
+- A live chat-service health indicator and a 500-character message counter.
 - Responsive design for desktop and mobile screens.
 - Fallback responses when the chatbot cannot find a suitable answer.
 - Basic automated tests for chatbot functionality.
@@ -123,6 +125,10 @@ These tests help check the chatbot's responses and basic functionality.
 6. The answer appears in the chat window.
 
 If the chatbot cannot find a suitable match, it provides a fallback response instead of guessing an answer.
+
+Urgent phrases such as severe chest pain, trouble breathing, stroke, overdose, and unconsciousness are routed to emergency guidance before FAQ matching. This is a conservative keyword safeguard, not a medical triage system. In an emergency, contact local emergency services rather than waiting for the chatbot.
+
+The live status indicator checks whether this app's chat service responds to `/api/health`; it does not report hospital operations. Doctor schedules, appointment slots, wait times, test results, and other real-time clinical or operational data are not connected in this demo. Those features need verified hospital systems and authorized integrations before they can be shown accurately.
 
 ## What I Learned
 

@@ -5,8 +5,18 @@
   const sendButton = document.getElementById("send-button");
   const clearButton = document.getElementById("clear-chat");
   const suggestionList = document.getElementById("suggestion-list");
+  const emergencyButton = document.getElementById("emergency-help");
+  const characterCount = document.getElementById("character-count");
+  const serviceStatus = document.getElementById("service-status");
+  const chatServiceStatus = document.getElementById("chat-service-status");
+  const serviceStatusDots = document.querySelectorAll("[data-service-status-dot]");
 
   const initialGreeting = "Hello! 👋 I'm the hospital FAQ assistant. I can help with common questions about appointments, opening hours, facilities, and more. What would you like to know?";
+  const healthCheckInterval = 30000;
+
+  function updateCharacterCount() {
+    characterCount.textContent = `${input.value.length}/500`;
+  }
 
   function timeLabel() {
     return new Intl.DateTimeFormat([], { hour: "numeric", minute: "2-digit" }).format(new Date());
@@ -64,6 +74,7 @@
     if (!message || sendButton.disabled) return;
     addMessage(message, "user");
     input.value = "";
+    updateCharacterCount();
     sendButton.disabled = true;
     input.disabled = true;
     addTyping();
@@ -86,9 +97,33 @@
     }
   }
 
+  function updateServiceStatus(isOnline) {
+    const label = isOnline ? "Chat service online" : "Chat service unavailable";
+    serviceStatus.textContent = label;
+    chatServiceStatus.textContent = isOnline ? "Service is available" : "Service is unavailable";
+    serviceStatusDots.forEach((dot) => {
+      dot.classList.toggle("status-offline", !isOnline);
+    });
+  }
+
+  async function checkServiceStatus() {
+    try {
+      const response = await fetch("/api/health", { cache: "no-store" });
+      if (!response.ok) throw new Error("Health check failed.");
+      const data = await response.json();
+      updateServiceStatus(data.status === "ok");
+    } catch {
+      updateServiceStatus(false);
+    }
+  }
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     sendMessage(input.value);
+  });
+
+  input.addEventListener("input", () => {
+    updateCharacterCount();
   });
 
   suggestionList.addEventListener("click", (event) => {
@@ -96,9 +131,18 @@
     if (button) sendMessage(button.dataset.question);
   });
 
+  emergencyButton.addEventListener("click", () => {
+    sendMessage("What should I do in a medical emergency?");
+  });
+
   clearButton.addEventListener("click", () => {
     messages.replaceChildren();
     addMessage(initialGreeting, "bot");
     input.focus();
   });
+
+  window.addEventListener("online", checkServiceStatus);
+  window.addEventListener("offline", () => updateServiceStatus(false));
+  checkServiceStatus();
+  window.setInterval(checkServiceStatus, healthCheckInterval);
 })();
