@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="A sample hospital FAQ assistant for common visitor questions.">
+  <title>CareDesk | Hospital FAQ Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="CareDesk home">
+        <span class="brand-mark" aria-hidden="true">+</span>
+        <span><strong>CareDesk</strong><small>Patient support</small></span>
+      </a>
+      <div class="sidebar-label">ASSISTANT</div>
+      <div class="nav-item active"><span class="nav-icon">▤</span> Hospital FAQ</div>
+      <div class="sidebar-card">
+        <div class="mini-icon">✦</div>
+        <strong>Here to help</strong>
+        <p>Get quick answers about appointments, facilities, and visiting.</p>
+      </div>
+      <div class="sidebar-bottom">
+        <span class="status-dot"></span>
+        <span>FAQ assistant online</span>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div class="breadcrumb">Patient support <span>/</span> <strong>FAQ assistant</strong></div>
+        <div class="secure-label"><span>✳</span> Helpful information, anytime</div>
+      </header>
+
+      <section class="content-wrap">
+        <div class="intro">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> ABC GENERAL HOSPITAL</div>
+          <h1>Good care starts<br><span>with clear answers.</span></h1>
+          <p>Ask a question about hospital services, appointments, or what to expect during your visit.</p>
+        </div>
+
+        <section class="chat-card" aria-label="Chat with the hospital FAQ assistant">
+          <div class="chat-header">
+            <div class="assistant-avatar" aria-hidden="true"><span>✚</span></div>
+            <div class="assistant-details">
+              <strong>CareDesk Assistant</strong>
+              <span><i class="status-dot"></i> Typically replies instantly</span>
+            </div>
+            <button class="icon-button" id="clear-chat" type="button" title="Start a new conversation" aria-label="Clear chat">↻</button>
+          </div>
+
+          <div class="chat-messages" id="chat-messages" aria-live="polite" aria-relevant="additions">
+            <div class="message-row bot-row">
+              <div class="message-avatar" aria-hidden="true">✚</div>
+              <div class="message-content">
+                <div class="message-meta">CareDesk Assistant <span>Just now</span></div>
+                <div class="bubble bot-bubble">Hello! 👋 I'm the hospital FAQ assistant. I can help with common questions about appointments, opening hours, facilities, and more. What would you like to know?</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="suggestions-area">
+            <div class="suggestions-label">SUGGESTED QUESTIONS</div>
+            <div class="suggestion-list" id="suggestion-list">
+              {% for question in suggestions %}
+              <button class="suggestion-chip" type="button" data-question="{{ question }}">{{ question }} <span>↗</span></button>
+              {% endfor %}
+            </div>
+          </div>
+
+          <form class="composer" id="chat-form">
+            <label class="sr-only" for="message-input">Type your question</label>
+            <input id="message-input" name="message" maxlength="500" autocomplete="off" placeholder="Type your question here..." required>
+            <span class="composer-hint">Enter ↵</span>
+            <button class="send-button" id="send-button" type="submit" aria-label="Send message"><span>Send</span><b>➤</b></button>
+          </form>
+          <div class="chat-footnote"><span>🔒</span> Please don't share private medical or personal information.</div>
+        </section>
+
+        <div class="notice">
+          <span class="notice-icon">ⓘ</span>
+          <p><strong>Important:</strong> This is a demonstration FAQ assistant, not a medical professional. It does not diagnose conditions or provide medical advice. For emergencies, contact local emergency services. Hospital details shown here must be verified before real-world use.</p>
+        </div>
+        <footer>CareDesk Assistant <span>•</span> Student project demonstration</footer>
+      </section>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/chat.js') }}" defer></script>
+</body>
+</html>
